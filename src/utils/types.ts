@@ -1,4 +1,7 @@
+import { ReactNode } from 'react';
+
 export type TIngredient = {
+  [x: string]: ReactNode;
   _id: string;
   name: string;
   type: string;
