@@ -1,6 +1,6 @@
-// import { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-// export type TCentral = {
-//   title: string;
-//   children?: ReactNode;
-// }
+export type TCentral = {
+  title: string;
+  children?: ReactNode;
+}

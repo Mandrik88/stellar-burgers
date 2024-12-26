@@ -22,68 +22,105 @@ import { useDispatch } from '../../services/store';
 import { useEffect } from 'react';
 import { getUser } from '../../services/slices/userSlice/userSlice';
 import { getIngredients } from '../../services/slices/ingredientSlice/ingredientSlice';
-// import { CentralComponent } from '../../components/central-component/central-component';
+import { CentralComponent } from '../../components/central-component/central-component';
 
 const App = () => {
   const location = useLocation();
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const background = location.state?.baсkground;
-  // console.log(store.getState());
-  console.log('Location:', location);
-  console.log('Background:', background);
+  const background = location.state?.background;
 
   useEffect(() => {
     dispatch(getUser());
     dispatch(getIngredients());
   }, [dispatch]);
+
   return (
     <div className={styles.app}>
       <AppHeader />
       <Routes location={background || location}>
         <Route path='/' element={<ConstructorPage />} />
-        {/* <Route path='/ingredients/:id' element={<IngredientDetails />} /> */}
+        <Route
+          path='/ingredients/:id'
+          element={
+            <CentralComponent title={'Детали ингредиента'}>
+              <IngredientDetails />
+            </CentralComponent>
+          }
+        />
         <Route path='/feed' element={<Feed />} />
-        <Route path='/feed/:number' element={<OrderInfo />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/register' element={<Register />} />
-        <Route path='/forgot-password' element={<ForgotPassword />} />
-        <Route path='/reset-password' element={<ResetPassword />} />
-        <Route element={<ProtectedRoute />}>
+        <Route
+          path='/feed/:number'
+          element={
+            <CentralComponent title={`#${location.pathname.match(/\d+/)}`}>
+              <OrderInfo />
+            </CentralComponent>
+          }
+        />
+        <Route element={<ProtectedRoute onlyUnAuth />}>
+          <Route path='/login' element={<Login />} />
+          <Route path='/register' element={<Register />} />
+          <Route path='/forgot-password' element={<ForgotPassword />} />
+          <Route path='/reset-password' element={<ResetPassword />} />
+        </Route>
+        <Route element={<ProtectedRoute onlyUnAuth={false} />}>
           <Route path='/profile' element={<Profile />} />
           <Route path='/profile/orders' element={<ProfileOrders />} />
-          <Route path='/profile/orders/:number' element={<OrderInfo />} />
+          <Route
+            path='/profile/orders/:number'
+            element={
+              <CentralComponent title={`#${location.pathname.match(/\d+/)}`}>
+                <OrderInfo />
+              </CentralComponent>
+            }
+          />
         </Route>
         <Route path='*' element={<NotFound404 />} />
       </Routes>
 
-      {/* Это отдельные маршруты для отображения модальных окон */}
       {background && (
         <Routes>
           <Route
-            path='/feed/:number'
-            element={
-              <Modal title={''} onClose={() => navigate(-1)}>
-                <OrderInfo />
-              </Modal>
-            }
-          />
-          <Route
             path='/ingredients/:id'
             element={
-              <Modal title={'Детали ингредиента'} onClose={() => navigate(-1)}>
+              <Modal
+                title={'Детали ингредиента'}
+                onClose={() => {
+                  history.back();
+                }}
+              >
                 <IngredientDetails />
               </Modal>
             }
           />
+
           <Route
-            path='/profile/orders/:number'
+            path='/feed/:number'
             element={
-              <Modal title={''} onClose={() => navigate(-1)}>
+              <Modal
+                title={`#${location.pathname.match(/\d+/)}`}
+                onClose={() => {
+                  history.back();
+                }}
+              >
                 <OrderInfo />
               </Modal>
             }
           />
+          <Route element={<ProtectedRoute onlyUnAuth={false} />}>
+            <Route
+              path='/profile/orders/:number'
+              element={
+                <Modal
+                  title={`#${location.pathname.match(/\d+/)}`}
+                  onClose={() => {
+                    history.back();
+                  }}
+                >
+                  <OrderInfo />
+                </Modal>
+              }
+            />
+          </Route>
         </Routes>
       )}
     </div>
