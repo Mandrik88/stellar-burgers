@@ -1,0 +1,9 @@
+{
+  "success": true,
+  "accessToken": "1111",
+  "refreshToken": "3333",
+  "user": {
+    "email": "lena@open.ru",
+    "name": "Elena"
+  }
+}

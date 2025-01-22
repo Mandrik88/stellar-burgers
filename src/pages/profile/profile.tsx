@@ -11,7 +11,7 @@ import { Preloader } from '@ui';
 export const Profile: FC = () => {
   console.log('render profile page');
   const data = useSelector(getUserState).userData;
-  const loading = useSelector(getUserState).loading;
+  const loading = useSelector(getUserState).request;
   const dispatch = useDispatch();
 
   const user = {
