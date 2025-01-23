@@ -53,7 +53,7 @@ describe('добавление ингредиента в список заказ
 
 describe('оформление заказа', () => {
   beforeEach(() => {
-    window.localStorage.setItem('refreshToken', '3333');
+    window.localStorage.setItem('refreshToken', '4444');
     cy.setCookie('accessToken', '1111');
     // Проверка на наличие данных
     cy.getAllLocalStorage().should('not.be.empty');
