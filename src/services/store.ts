@@ -10,15 +10,15 @@ import {
   useDispatch as dispatchHook,
   useSelector as selectorHook
 } from 'react-redux';
-import profileOrderSlice from './slices/profileOrderSlice/profileOrderSlice';
+// import profileOrderSlice from './slices/profileOrderSlice/profileOrderSlice';
 
 export const rootReducer = combineReducers({
   ingredient: ingredientSlice,
   order: orderSlice,
   constructorBurger: constructorSlice,
   feed: feedSlice,
-  user: userSlice,
-  profileOrders: profileOrderSlice
+  user: userSlice
+  // profileOrders: profileOrderSlice
 });
 // Заменить на импорт настоящего редьюсера
 
