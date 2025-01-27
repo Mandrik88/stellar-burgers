@@ -26,16 +26,16 @@ describe('feedSlice', () => {
 
   // Проверка, что начальное состояние соответствует ожидаемому
   test('should return the initial state', () => {
-    const state = store.getState().feed;
-    expect(state).toEqual(initialState);
+    const result = store.getState().feed;
+    expect(result).toEqual(initialState);
   });
 
   // Тестируем обработку.pending при запросе кормов
   test('should handle getFeeds.pending', () => {
     store.dispatch(getFeeds.pending('testRequestId'));
-    const state = store.getState().feed;
-    expect(state.loading).toBe(true);
-    expect(state.error).toBe(null);
+    const result = store.getState().feed;
+    expect(result.loading).toBe(true);
+    expect(result.error).toBe(null);
   });
 
   // Тестируем обработку.fulfilled при успешном получении кормов
@@ -54,12 +54,12 @@ describe('feedSlice', () => {
       payload: feedsResponse
     };
 
-    const state = feedReducer(initialState, action); // Получаем новое состояние среза, применяя действие к начальному состоянию
-    expect(state.orders).toEqual(feedsResponse.orders); // Проверяем, что заказы обновились
-    expect(state.total).toBe(feedsResponse.total); // Проверяем, что общее количество заказов обновлено
-    expect(state.totalToday).toBe(feedsResponse.totalToday); // Проверяем обновление количества заказов за сегодня
-    expect(state.loading).toBe(false); // Проверяем, что флаг загрузки сброшен
-    expect(state.error).toBe(null); // Убедимся, что ошибка отсутствует
+    const result = feedReducer(initialState, action); // Получаем новое состояние среза, применяя действие к начальному состоянию
+    expect(result.orders).toEqual(feedsResponse.orders); // Проверяем, что заказы обновились
+    expect(result.total).toBe(feedsResponse.total); // Проверяем, что общее количество заказов обновлено
+    expect(result.totalToday).toBe(feedsResponse.totalToday); // Проверяем обновление количества заказов за сегодня
+    expect(result.loading).toBe(false); // Проверяем, что флаг загрузки сброшен
+    expect(result.error).toBe(null); // Убедимся, что ошибка отсутствует
   });
 
   // Тестируем обработку.rejected при ошибке получения кормов
@@ -70,8 +70,8 @@ describe('feedSlice', () => {
       error: { message: errorMessage }
     };
 
-    const state = feedReducer(initialState, action); // Получаем новое состояние среза, применяя действие
-    expect(state.loading).toBe(false); // Проверяем, что флаг загрузки сброшен
-    expect(state.error).toBe(errorMessage); // Убедимся, что ошибка правильно установлена
+    const result = feedReducer(initialState, action); // Получаем новое состояние среза, применяя действие
+    expect(result.loading).toBe(false); // Проверяем, что флаг загрузки сброшен
+    expect(result.error).toBe(errorMessage); // Убедимся, что ошибка правильно установлена
   });
 });

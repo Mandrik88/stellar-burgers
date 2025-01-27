@@ -13,7 +13,7 @@ import { expect, test, describe } from '@jest/globals';
 // набор тестов для slice конструктора
 describe('constructorSlice', () => {
   // Начальное состояние с пустыми параметрами конструктора
-  const initialTestState = {
+  const initialState = {
     constructorItems: {
       bun: null,
       ingredients: []
@@ -52,13 +52,13 @@ describe('constructorSlice', () => {
       };
 
       // Добавление ингредиента в состояние
-      const newState = constructorSlice(
-        initialTestState,
+      const result = constructorSlice(
+        initialState,
         addIngredient(toAddIngredient)
       );
 
       // Проверка, что новый ингредиент добавлен в массив ingredients
-      expect(newState.constructorItems.ingredients).toContainEqual({
+      expect(result.constructorItems.ingredients).toContainEqual({
         ...toAddIngredient,
         id: expect.any(String)
       });
@@ -81,13 +81,13 @@ describe('constructorSlice', () => {
       };
 
       // Добавление булки в состояние
-      const newState = constructorSlice(
-        initialTestState,
+      const result = constructorSlice(
+        initialState,
         addIngredient(toAddBun)
       );
 
       // Проверка, что булка добавлена в состояние
-      expect(newState.constructorItems.bun).toEqual({
+      expect(result.constructorItems.bun).toEqual({
         ...toAddBun,
         id: expect.any(String) // Проверка, что id сгенерирован и является строкой
       });
@@ -96,7 +96,7 @@ describe('constructorSlice', () => {
     // Тест на замену ранее добавленной булки
     test('replacement of the previously added bun', () => {
       const initialStateWithBun = {
-        ...initialTestState,
+        ...initialState,
         constructorItems: {
           bun: {
             _id: '643d69a5c3f7b9001cfa093c',
@@ -134,13 +134,13 @@ describe('constructorSlice', () => {
       };
 
       // Добавление новой булки и ожидание замены
-      const newState = constructorSlice(
+      const result = constructorSlice(
         initialStateWithBun,
         addIngredient(actualBun)
       );
 
       // Проверка, что булка была заменена
-      expect(newState.constructorItems.bun).toEqual({
+      expect(result.constructorItems.bun).toEqual({
         ...actualBun,
         id: expect.any(String) // Проверка, что id сгенерирован и является строкой
       });
@@ -150,7 +150,7 @@ describe('constructorSlice', () => {
   // Тесты для удаления ингредиентов
   describe('removeIngredient', () => {
     const stateWithIngredient = {
-      ...initialTestState,
+      ...initialState,
       constructorItems: {
         bun: null,
         ingredients: [
@@ -176,20 +176,20 @@ describe('constructorSlice', () => {
 
     // Тест на удаление ингредиента из конструктора
     test('remove ingredient from constructor', () => {
-      const newState = constructorSlice(
+      const result = constructorSlice(
         stateWithIngredient,
         removeIngredient('sauce5') // Удаление ингредиента с id 'sauce5'
       );
 
       // Проверка, что массив ингредиентов теперь пуст
-      expect(newState.constructorItems.ingredients).toEqual([]);
+      expect(result.constructorItems.ingredients).toEqual([]);
     });
   });
 
   // Тесты для перемещения ингредиентов
   describe('moving ingredients', () => {
     const stateWithIngredients = {
-      ...initialTestState,
+      ...initialState,
       constructorItems: {
         bun: {
           id: 'bun1',
@@ -260,7 +260,7 @@ describe('constructorSlice', () => {
 
     // Тест на перемещение ингредиента вверх
     test('moving the ingredient up', () => {
-      const newState = constructorSlice(
+      const result = constructorSlice(
         stateWithIngredients,
         moveIngredientUp(2) // Перемещение ингредиента с индексом 2 вверх
       );
@@ -273,12 +273,12 @@ describe('constructorSlice', () => {
       ];
 
       // Проверка, что порядок ингредиентов соответствует ожидаемому
-      expect(newState.constructorItems.ingredients).toEqual(expectedOrder);
+      expect(result.constructorItems.ingredients).toEqual(expectedOrder);
     });
 
     // Тест на перемещение ингредиента вниз
     test('moving the ingredient down', () => {
-      const newState = constructorSlice(
+      const result = constructorSlice(
         stateWithIngredients,
         moveIngredientDown(1) // Перемещение ингредиента с индексом 1 вниз
       );
@@ -291,7 +291,7 @@ describe('constructorSlice', () => {
       ];
 
       // Проверка, что порядок ингредиентов соответствует ожидаемому
-      expect(newState.constructorItems.ingredients).toEqual(expectedOrder);
+      expect(result.constructorItems.ingredients).toEqual(expectedOrder);
     });
   });
 
@@ -311,24 +311,24 @@ describe('constructorSlice', () => {
 
     // Тест на состояние заказа при ожидании
     test('pending', () => {
-      const state = constructorSlice(initialTestState, actions.pending);
-      expect(state.loading).toBe(true); // Проверка, что состояние загрузки действительно
-      expect(state.error).toBeNull(); // Проверка, что ошибки нет
+      const result = constructorSlice(initialState, actions.pending);
+      expect(result.loading).toBe(true); // Проверка, что состояние загрузки действительно
+      expect(result.error).toBeNull(); // Проверка, что ошибки нет
     });
 
     // Тест на состояние заказа при отказе
     test('rejected', () => {
-      const state = constructorSlice(initialTestState, actions.rejected);
-      expect(state.loading).toBe(false); // Проверка, что состояние загрузки завершено
-      expect(state.error).toBe('error'); // Проверка, что ошибка установлена
+      const result = constructorSlice(initialState, actions.rejected);
+      expect(result.loading).toBe(false); // Проверка, что состояние загрузки завершено
+      expect(result.error).toBe('error'); // Проверка, что ошибка установлена
     });
 
     // Тест на состояние заказа при успешном выполнении
     test('fulfilled', () => {
-      const state = constructorSlice(initialTestState, actions.fulfilled);
-      expect(state.loading).toBe(false); // Проверка, что состояние загрузки завершено
-      expect(state.orderModalData?.number).toBe(404); // Проверка, что номер заказа сохранен
-      expect(state.error).toBeNull(); // Проверка, что ошибки нет
+      const result = constructorSlice(initialState, actions.fulfilled);
+      expect(result.loading).toBe(false); // Проверка, что состояние загрузки завершено
+      expect(result.orderModalData?.number).toBe(404); // Проверка, что номер заказа сохранен
+      expect(result.error).toBeNull(); // Проверка, что ошибки нет
     });
   });
 
@@ -336,11 +336,11 @@ describe('constructorSlice', () => {
   describe('setRequest', () => {
     test('sets order request state', () => {
       const orderData = true;
-      const newState = constructorSlice(
-        initialTestState,
+      const result = constructorSlice(
+        initialState,
         setRequest(orderData)
       ); // Установка orderRequest в true
-      expect(newState.orderRequest).toBe(orderData); // Проверка, что состояние изменено на true
+      expect(result.orderRequest).toBe(orderData); // Проверка, что состояние изменено на true
     });
   });
 
@@ -348,7 +348,7 @@ describe('constructorSlice', () => {
   describe('resetModal', () => {
     test('resets order modal data to null', () => {
       const stateWithModalData = {
-        ...initialTestState,
+        ...initialState,
         orderModalData: {
           _id: '',
           status: '',
@@ -359,8 +359,8 @@ describe('constructorSlice', () => {
           ingredients: []
         } // Предустановка данных модального окна
       };
-      const newState = constructorSlice(stateWithModalData, resetModal()); // Сброс данных модального окна
-      expect(newState.orderModalData).toBeNull(); // Проверка, что данные сброшены
+      const result = constructorSlice(stateWithModalData, resetModal()); // Сброс данных модального окна
+      expect(result.orderModalData).toBeNull(); // Проверка, что данные сброшены
     });
   });
 });
