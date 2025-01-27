@@ -81,10 +81,7 @@ describe('constructorSlice', () => {
       };
 
       // Добавление булки в состояние
-      const result = constructorSlice(
-        initialState,
-        addIngredient(toAddBun)
-      );
+      const result = constructorSlice(initialState, addIngredient(toAddBun));
 
       // Проверка, что булка добавлена в состояние
       expect(result.constructorItems.bun).toEqual({
@@ -266,14 +263,16 @@ describe('constructorSlice', () => {
       );
 
       // Ожидаемый порядок ингредиентов после перемещения
-      const expectedOrder = [
+      const expectedIngredientSequence = [
         stateWithIngredients.constructorItems.ingredients[0],
         stateWithIngredients.constructorItems.ingredients[2],
         stateWithIngredients.constructorItems.ingredients[1]
       ];
 
       // Проверка, что порядок ингредиентов соответствует ожидаемому
-      expect(result.constructorItems.ingredients).toEqual(expectedOrder);
+      expect(result.constructorItems.ingredients).toEqual(
+        expectedIngredientSequence
+      );
     });
 
     // Тест на перемещение ингредиента вниз
@@ -284,14 +283,16 @@ describe('constructorSlice', () => {
       );
 
       // Ожидаемый порядок ингредиентов после перемещения
-      const expectedOrder = [
+      const expectedIngredientSequence = [
         stateWithIngredients.constructorItems.ingredients[0],
         stateWithIngredients.constructorItems.ingredients[2],
         stateWithIngredients.constructorItems.ingredients[1]
       ];
 
       // Проверка, что порядок ингредиентов соответствует ожидаемому
-      expect(result.constructorItems.ingredients).toEqual(expectedOrder);
+      expect(result.constructorItems.ingredients).toEqual(
+        expectedIngredientSequence
+      );
     });
   });
 
@@ -336,10 +337,7 @@ describe('constructorSlice', () => {
   describe('setRequest', () => {
     test('sets order request state', () => {
       const orderData = true;
-      const result = constructorSlice(
-        initialState,
-        setRequest(orderData)
-      ); // Установка orderRequest в true
+      const result = constructorSlice(initialState, setRequest(orderData)); // Установка orderRequest в true
       expect(result.orderRequest).toBe(orderData); // Проверка, что состояние изменено на true
     });
   });
