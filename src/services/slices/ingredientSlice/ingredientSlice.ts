@@ -38,7 +38,7 @@ export const ingredientSlice = createSlice({
         state.error = action.error.message as string;
       })
       .addCase(getIngredients.fulfilled, (state, action) => {
-        console.log(action.payload);
+        // console.log(action.payload);
         state.loading = false;
         state.error = null;
         state.ingredients = action.payload;
