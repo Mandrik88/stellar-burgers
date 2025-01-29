@@ -1,53 +1,6 @@
 import Cypress from 'cypress';
 
 
-const ingredientData = {
-  success: true,
-  data: [
-    {
-      _id: '643d69a5c3f7b9001cfa093d',
-      name: 'Флюоресцентная булка R2-D3',
-      type: 'bun',
-      proteins: 44,
-      fat: 26,
-      carbohydrates: 85,
-      calories: 643,
-      price: 988,
-      image: 'https://code.s3.yandex.net/react/code/bun-01.png',
-      image_mobile: 'https://code.s3.yandex.net/react/code/bun-01-mobile.png',
-      image_large: 'https://code.s3.yandex.net/react/code/bun-01-large.png',
-      __v: 0
-    },
-    {
-      _id: '643d69a5c3f7b9001cfa094a',
-      name: 'Сыр с астероидной плесенью',
-      type: 'main',
-      proteins: 84,
-      fat: 48,
-      carbohydrates: 420,
-      calories: 3377,
-      price: 4142,
-      image: 'https://code.s3.yandex.net/react/code/cheese.png',
-      image_mobile: 'https://code.s3.yandex.net/react/code/cheese-mobile.png',
-      image_large: 'https://code.s3.yandex.net/react/code/cheese-large.png',
-      __v: 0
-    },
-    {
-      _id: '643d69a5c3f7b9001cfa0943',
-      name: 'Соус фирменный Space Sauce',
-      type: 'sauce',
-      proteins: 50,
-      fat: 22,
-      carbohydrates: 11,
-      calories: 14,
-      price: 80,
-      image: 'https://code.s3.yandex.net/react/code/sauce-04.png',
-      image_mobile: 'https://code.s3.yandex.net/react/code/sauce-04-mobile.png',
-      image_large: 'https://code.s3.yandex.net/react/code/sauce-04-large.png',
-      __v: 0
-    }
-  ]
-};
 const baseUrl = 'http://localhost:4000';
 const getUserUrl = 'api/auth/user';
 const orderUrl = 'api/orders';
@@ -58,9 +11,9 @@ const addButtonIngredient =
 
 describe('Конструктор бургера и создание заказа', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/api/ingredients', ingredientData).as(
-      'getIngredients'
-    );
+    cy.intercept('GET', '**/api/ingredients', {
+      fixture: 'ingredient.json'
+    }).as('getIngredients');
     cy.intercept('GET', getUserUrl, { fixture: 'user.json' }).as('getUser');
     cy.intercept('POST', orderUrl, { fixture: 'order.json' }).as('postOrder');
 
@@ -78,6 +31,11 @@ describe('Конструктор бургера и создание заказа
   describe('Функционал конструктора и создание заказа', () => {
     it('добавляем булки и основной ингредиент в конструктор', () => {
       cy.wait('@getIngredients');
+
+      // Проверяем, что булка отсутствует в конструкторе
+      cy.get('[data-cy=bun-top]').should('not.exist');
+      cy.get('[data-cy=bun-bottom]').should('not.exist');
+
       // Добавление булки
       cy.get(addButtonBun).click();
       // Проверка верхней булки
@@ -88,6 +46,10 @@ describe('Конструктор бургера и создание заказа
       cy.get('[data-cy=bun-bottom]')
         .contains('Флюоресцентная булка R2-D3')
         .should('exist');
+
+      // Проверяем, что основной ингредиент отсутствует в конструкторе
+      cy.get('[data-cy=between-buns]').should('not.exist'); // Ожидаем, что соус отсутствует
+
       // Добавление основного ингредиента
       cy.get(addButtonIngredient).click();
       // Проверка добавленного ингредиента
@@ -98,10 +60,28 @@ describe('Конструктор бургера и создание заказа
 
     it('открытие и закрытие модального окна ингредиента', () => {
       cy.wait('@getIngredients');
-      // Открытие модального окна ингредиентов
-      cy.get('[data-cy=ingredient-link-643d69a5c3f7b9001cfa0943]').click();
-      // Проверка существования модала
-      cy.get('[data-cy=modal-content]').should('exist');
+
+      // Проверка, что модальное окно отсутствует перед открытием
+      cy.get('[data-cy=modal-content]').should('not.exist');
+
+      //Клик по ингредиенту
+      cy.get(addButtonBun).click(); //
+      // Проверка, что модальное окно открыто
+      cy.get('[data-cy=ingredient-link-643d69a5c3f7b9001cfa0943]')
+        .click()
+        .then(() => {
+          cy.get('[data-cy=modal-content]').should('exist');
+        });
+      // Проверка, что в модальном окне содержится нужная информация о ингредиенте
+      cy.get('[data-cy=modal-content]')
+        .contains('Соус фирменный Space Sauce')
+        .should('exist'); // Проверка наличия названия
+
+      // Проверка, что в модальном окне содержится детальная информация
+      cy.get('[data-cy=modal-content]')
+        .contains('Детали ингредиента')
+        .should('exist');
+
       // Закрытие модального окна
       cy.get('[data-cy=modal-content] button[type=button]').click();
       // Проверка отсутствия модала
@@ -110,6 +90,10 @@ describe('Конструктор бургера и создание заказа
 
     it('should close modal on overlay click', () => {
       cy.wait('@getIngredients');
+
+      // Проверка, что модальное окно отсутствует перед открытием
+      cy.get('[data-cy=modal-content]').should('not.exist');
+
       // Открытие модального окна
       cy.get('[data-cy=ingredient-link-643d69a5c3f7b9001cfa0943]').click();
       // Проверка существования модала
@@ -141,6 +125,7 @@ describe('Конструктор бургера и создание заказа
       cy.get(addButtonBun).click();
       // Добавление основного ингредиента
       cy.get(addButtonIngredient).click();
+
       // Оформление заказа
       cy.get('[data-cy=making-an-order-button]').click();
       cy.wait('@postOrder');
