@@ -102,7 +102,7 @@ export const constructorSlice = createSlice({
           bun: null,
           ingredients: []
         };
-        console.log(action.payload);
+        // console.log(action.payload);
       });
   }
 });
